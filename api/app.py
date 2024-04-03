@@ -20,5 +20,31 @@ app=FastAPI(
 
 add_routes(
     app,
-    ChatOpenAI
+    ChatOpenAI(),
+    path="/openai"
 )
+
+model=ChatOpenAI()
+
+# ollama llama2
+llm=Ollama(model="llama2")
+
+prompt1=ChatPromptTemplate.from_template("Write me a 100 word essay about {topic}.")
+
+prompt2=ChatPromptTemplate.from_template("Write me a 100 word poem about {topic}.")
+
+add_routes(
+    app,
+    prompt1|model,# openai api
+    path="/essay"
+)
+
+add_routes(
+    app,
+    prompt2|llm,# openai api
+    path="/poem"
+)
+
+
+if __name__=="__main__":
+    uvicorn.run(app, host="localhost", port=8080)
